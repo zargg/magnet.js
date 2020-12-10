@@ -1,9 +1,9 @@
 'use strict';
 
-import { isset, tobool, tonum, tostr, isarray, objForEach, objMap, getStyle, stdDoms, isbool, iselem, isfunc } from './stdlib';
-import EventHandler from './event-handler';
-import { isRect, stdRect, diffRect } from './rect';
 import ALIGNMENT_PROPS from './alignment-props';
+import EventHandler from './event-handler';
+import { diffRect, isRect, stdRect } from './rect';
+import { getStyle, isarray, isbool, iselem, isfunc, isset, objForEach, objMap, stdDoms, tobool, tonum, tostr } from './stdlib';
 
 const ALIGNMENT_OUTER = [ALIGNMENT_PROPS.tb, ALIGNMENT_PROPS.rl, ALIGNMENT_PROPS.bt, ALIGNMENT_PROPS.lr];
 const ALIGNMENT_INNER = [ALIGNMENT_PROPS.tt, ALIGNMENT_PROPS.rr, ALIGNMENT_PROPS.bb, ALIGNMENT_PROPS.ll];
@@ -28,17 +28,17 @@ const EVENT = {
 };
 
 const toPx = (p) => `${p}px`;
-const toPreg = (p) => `${100*p}%`;
-const getEventXY = ({ clientX, clientY, touches: [{ clientX: x = clientX, clientY: y = clientY } = {}] = []}) => ({ x, y });
+const toPreg = (p) => `${100 * p}%`;
+const getEventXY = ({ clientX, clientY, touches: [{ clientX: x = clientX, clientY: y = clientY } = {}] = [] }) => ({ x, y });
 const bindEventNames = (self, ...names) => {
   const { [MAGNET_PROPS.id]: id } = self;
   return names.reduce((arr, name) => (isarray(name)
-    ?arr.concat(bindEventNames(self, ...name))
-    :arr.concat(name.split(' ').map((name) => `${name}.${id}`))
+    ? arr.concat(bindEventNames(self, ...name))
+    : arr.concat(name.split(' ').map((name) => `${name}.${id}`))
   ), []);
 };
 const getParent = (d) => {
-  for (let r=d.parentElement; r; r=r.parentElement) {
+  for (let r = d.parentElement; r; r = r.parentElement) {
     if ('static' !== getStyle(r).position) {
       return r;
     }
@@ -102,17 +102,17 @@ function Magnet(...doms) {
     [MAGNET_PROPS.alignCenter]: { value: MAGNET_DEFAULTS.alignCenter, writable: true },
     [MAGNET_PROPS.alignParentCenter]: { value: MAGNET_DEFAULTS.alignParentCenter, writable: true },
   });
-  objForEach(MAGNET_DEFAULTS, (value, prop) => (isset(this[prop])&&this[prop](value)));
+  objForEach(MAGNET_DEFAULTS, (value, prop) => (isset(this[prop]) && this[prop](value)));
   if (doms.length) {
     this.add(doms);
   }
 }
 
 // distance
-Magnet.prototype.getDistance = function() {
+Magnet.prototype.getDistance = function () {
   return this[MAGNET_PROPS.distance];
 };
-Magnet.prototype.setDistance = function(distance) {
+Magnet.prototype.setDistance = function (distance) {
   if (isNaN(distance)) {
     throw new Error(`Invalid distance: ${tostr(distance)}`);
   } else if (distance < 0) {
@@ -121,51 +121,51 @@ Magnet.prototype.setDistance = function(distance) {
   this[MAGNET_PROPS.distance] = tonum(distance);
   return this;
 };
-Magnet.prototype.distance = function(distance) {
-  return (isset(distance) ?this.setDistance(distance) :this.getDistance());
+Magnet.prototype.distance = function (distance) {
+  return (isset(distance) ? this.setDistance(distance) : this.getDistance());
 };
 
 // attractable
-Magnet.prototype.getAttractable = function() {
+Magnet.prototype.getAttractable = function () {
   return this[MAGNET_PROPS.attractable];
 };
-Magnet.prototype.setAttractable = function(enabled) {
+Magnet.prototype.setAttractable = function (enabled) {
   this[MAGNET_PROPS.attractable] = tobool(enabled);
   return this;
 };
-Magnet.prototype.attractable = function(enabled) {
-  return (isset(enabled) ?this.setAttractable(enabled) :this.getAttractable());
+Magnet.prototype.attractable = function (enabled) {
+  return (isset(enabled) ? this.setAttractable(enabled) : this.getAttractable());
 };
 
 // allow ctrl key
-Magnet.prototype.getAllowCtrlKey = function() {
+Magnet.prototype.getAllowCtrlKey = function () {
   return this[MAGNET_PROPS.allowCtrlKey];
 };
-Magnet.prototype.setAllowCtrlKey = function(enabled) {
+Magnet.prototype.setAllowCtrlKey = function (enabled) {
   this[MAGNET_PROPS.allowCtrlKey] = tobool(enabled);
   return this;
 };
-Magnet.prototype.allowCtrlKey = function(enabled) {
-  return (isset(enabled) ?this.setAllowCtrlKey(enabled) :this.getAllowCtrlKey());
+Magnet.prototype.allowCtrlKey = function (enabled) {
+  return (isset(enabled) ? this.setAllowCtrlKey(enabled) : this.getAllowCtrlKey());
 };
 
 // allow drag
-Magnet.prototype.getAllowDrag = function() {
+Magnet.prototype.getAllowDrag = function () {
   return this[MAGNET_PROPS.allowDrag];
 };
-Magnet.prototype.setAllowDrag = function(enabled) {
+Magnet.prototype.setAllowDrag = function (enabled) {
   this[MAGNET_PROPS.allowDrag] = tobool(enabled);
   return this;
 };
-Magnet.prototype.allowDrag = function(enabled) {
-  return (isset(enabled) ?this.setAllowDrag(enabled) :this.getAllowDrag());
+Magnet.prototype.allowDrag = function (enabled) {
+  return (isset(enabled) ? this.setAllowDrag(enabled) : this.getAllowDrag());
 };
 
 // use relative unit
-Magnet.prototype.getUseRelativeUnit = function() {
+Magnet.prototype.getUseRelativeUnit = function () {
   return this[MAGNET_PROPS.useRelativeUnit];
 };
-Magnet.prototype.setUseRelativeUnit = function(enabled) {
+Magnet.prototype.setUseRelativeUnit = function (enabled) {
   enabled = tobool(enabled);
   if (this[MAGNET_PROPS.useRelativeUnit] !== enabled) {
     stdDoms(this[MAGNET_PROPS.targets]).forEach((dom) => this.setMemberRectangle(dom));
@@ -173,47 +173,47 @@ Magnet.prototype.setUseRelativeUnit = function(enabled) {
   }
   return this;
 };
-Magnet.prototype.useRelativeUnit = function(enabled) {
-  return (isset(enabled) ?this.setUseRelativeUnit(enabled) :this.getUseRelativeUnit());
+Magnet.prototype.useRelativeUnit = function (enabled) {
+  return (isset(enabled) ? this.setUseRelativeUnit(enabled) : this.getUseRelativeUnit());
 };
 
 
 // stay in parent
-Magnet.prototype.getStayInParent = function() {
+Magnet.prototype.getStayInParent = function () {
   return this[MAGNET_PROPS.stayInParent];
 };
-Magnet.prototype.setStayInParent = function(enabled) {
+Magnet.prototype.setStayInParent = function (enabled) {
   this[MAGNET_PROPS.stayInParent] = tobool(enabled);
   return this;
 };
-Magnet.prototype.stayInParent = 
-Magnet.prototype.stayInParentEdge = 
-Magnet.prototype.stayInParentElem = function(enabled) {
-  return (isset(enabled) ?this.setStayInParent(enabled) :this.getStayInParent());
-};
+Magnet.prototype.stayInParent =
+  Magnet.prototype.stayInParentEdge =
+  Magnet.prototype.stayInParentElem = function (enabled) {
+    return (isset(enabled) ? this.setStayInParent(enabled) : this.getStayInParent());
+  };
 
 
 // align
 ['Outer', 'Inner', 'Center', 'ParentCenter'].forEach((name) => {
   const propName = `align${name}`;
   const funcName = `Align${name}`;
-  Magnet.prototype[`get${funcName}`] = function() {
+  Magnet.prototype[`get${funcName}`] = function () {
     return this[MAGNET_PROPS[propName]];
   };
-  Magnet.prototype[`set${funcName}`] = function(enabled) {
+  Magnet.prototype[`set${funcName}`] = function (enabled) {
     this[MAGNET_PROPS[propName]] = tobool(enabled);
     return this;
   };
-  Magnet.prototype[propName] = 
-    Magnet.prototype[`enabled${funcName}`] = function(enabled) {
-    return (isset(enabled) ?this[`set${funcName}`](enabled) :this[`get${funcName}`]());
-  };
+  Magnet.prototype[propName] =
+    Magnet.prototype[`enabled${funcName}`] = function (enabled) {
+      return (isset(enabled) ? this[`set${funcName}`](enabled) : this[`get${funcName}`]());
+    };
 });
 
 
 // on/off
 ['on', 'off'].forEach((prop) => {
-  Magnet.prototype[prop] = function(...args) {
+  Magnet.prototype[prop] = function (...args) {
     this[MAGNET_PROPS.eventHandler][prop](...args);
     return this;
   };
@@ -221,13 +221,13 @@ Magnet.prototype.stayInParentElem = function(enabled) {
 
 
 // check
-Magnet.prototype.check = function(
+Magnet.prototype.check = function (
   refDom,
   refRect = stdRect(refDom),
   alignmentProps = [].concat(
-    (this.getAlignOuter() ?ALIGNMENT_OUTER :[]),
-    (this.getAlignInner() ?ALIGNMENT_INNER :[]),
-    (this.getAlignCenter() ?ALIGNMENT_CENTER :[]),
+    (this.getAlignOuter() ? ALIGNMENT_OUTER : []),
+    (this.getAlignInner() ? ALIGNMENT_INNER : []),
+    (this.getAlignCenter() ? ALIGNMENT_CENTER : []),
   )
 ) {
   if (!iselem(refDom)) {
@@ -240,16 +240,16 @@ Magnet.prototype.check = function(
   const parentDom = getParent(refDom);
   const parentRect = stdRect(parentDom);
   const targets = this[MAGNET_PROPS.targets]
-    .filter((dom) => (dom!==refDom))
+    .filter((dom) => (dom !== refDom))
     .map((dom) => diffRect(refRect, dom, { alignments: alignmentProps, }));
   const results = targets.reduce((results, diff) => {
     objForEach(diff.results, (_, prop) => {
-      results[prop] = (results[prop]||[]);
+      results[prop] = (results[prop] || []);
       results[prop].push(diff);
     });
     return results;
   }, {});
-  const rankings = objMap(results, (arr, prop) => arr.concat().sort((a, b) => (a.results[prop]-b.results[prop])));
+  const rankings = objMap(results, (arr, prop) => arr.concat().sort((a, b) => (a.results[prop] - b.results[prop])));
   return {
     source: { rect: refRect, element: refDom },
     parent: { rect: parentRect, element: parentDom },
@@ -257,13 +257,13 @@ Magnet.prototype.check = function(
     results,
     rankings,
     mins: objMap(rankings, (arr) => arr[0]),
-    maxs: objMap(rankings, (arr) => arr[arr.length-1]),
+    maxs: objMap(rankings, (arr) => arr[arr.length - 1]),
   };
 };
 
 
 // handle
-const pushDomToEvent = (arr, dom) => (!arr.includes(dom)&&arr.push(dom));
+const pushDomToEvent = (arr, dom) => (!arr.includes(dom) && arr.push(dom));
 const stdMagentEventTarget = (ref) => {
   if (ref) {
     const { prop, target: { rect, element } } = ref;
@@ -278,8 +278,8 @@ const stdMagentEventTarget = (ref) => {
         case ALIGNMENT_PROPS.lr: return [right, x];
         case ALIGNMENT_PROPS.ll:
         case ALIGNMENT_PROPS.rl: return [left, x];
-        case ALIGNMENT_PROPS.xx: return [((right+left)/2), x];
-        case ALIGNMENT_PROPS.yy: return [((top+bottom)/2), y];
+        case ALIGNMENT_PROPS.xx: return [((right + left) / 2), x];
+        case ALIGNMENT_PROPS.yy: return [((top + bottom) / 2), y];
       }
     })(rect, parentRect);
     return {
@@ -287,21 +287,21 @@ const stdMagentEventTarget = (ref) => {
       rect,
       element,
       position,
-      offset: (position-diff),
+      offset: (position - diff),
     };
   } else {
     return null;
   }
 };
 const cmpAttractedResult = (a, b) => {
-  if ((a ?true :false) !== (b ?true :false)) {
+  if ((a ? true : false) !== (b ? true : false)) {
     return true;
-  } else if ((a ?a.target.element :null) !== (b ?b.target.element :null)) {
+  } else if ((a ? a.target.element : null) !== (b ? b.target.element : null)) {
     return true;
   }
   return false;
 };
-Magnet.prototype.handle = function(dom, refRect = stdRect(dom), toAttract = this.getAttractable()) {
+Magnet.prototype.handle = function (dom, refRect = stdRect(dom), toAttract = this.getAttractable()) {
   if (!iselem(dom)) {
     throw new Error(`Invalid DOM: ${tostr(dom)}`);
   }
@@ -316,14 +316,14 @@ Magnet.prototype.handle = function(dom, refRect = stdRect(dom), toAttract = this
   refRect = stdRect(refRect);
   const { _lastAttractedX, _lastAttractedY } = this[MAGNET_PROPS.temp][domIndex];
   const { top, left, width, height } = refRect;
-  const distance = (toAttract ?this.getDistance() :0);
-  const { parent, targets } = this.check(dom, refRect, (toAttract ?undefined :[]));
+  const distance = (toAttract ? this.getDistance() : 0);
+  const { parent, targets } = this.check(dom, refRect, (toAttract ? undefined : []));
   const { rect: parentRect, element: parentElement } = parent;
   const newPosition = { x: left, y: top };
   const { x: attractedX, y: attractedY } = targets
     .concat(
-      (this.getStayInParent() ?diffRect(refRect, parentElement, { alignments: ALIGNMENT_INNER, absDistance: false }) :[]),
-      (this.getAlignParentCenter() ?diffRect(refRect, parentElement, { alignments: ALIGNMENT_CENTER }) :[]),
+      (this.getStayInParent() ? diffRect(refRect, parentElement, { alignments: ALIGNMENT_INNER, absDistance: false }) : []),
+      (this.getAlignParentCenter() ? diffRect(refRect, parentElement, { alignments: ALIGNMENT_CENTER }) : []),
     )
     .reduce(({ x, y }, diff) => {
       const { target, results, ranking } = diff;
@@ -336,66 +336,66 @@ Magnet.prototype.handle = function(dom, refRect = stdRect(dom), toAttract = this
             case ALIGNMENT_PROPS.rl:
             case ALIGNMENT_PROPS.lr:
             case ALIGNMENT_PROPS.xx:
-            if (!x || value < x.value) {
-              x = { prop, value, target };
-            }
-            break;
+              if (!x || value < x.value) {
+                x = { prop, value, target };
+              }
+              break;
 
             case ALIGNMENT_PROPS.tt:
             case ALIGNMENT_PROPS.bb:
             case ALIGNMENT_PROPS.tb:
             case ALIGNMENT_PROPS.bt:
             case ALIGNMENT_PROPS.yy:
-            if (!y || value < y.value) {
-              y = { prop, value, target };
-            }
-            break;
+              if (!y || value < y.value) {
+                y = { prop, value, target };
+              }
+              break;
           }
         }
         return { x, y };
       }, { x, y });
     }, { x: null, y: null });
-    
+
   // be attracted by nearest target
   const eventsAttracted = [];
   const eventsUnattracted = [];
   if (attractedX) {
     const { prop, target: { rect } } = attractedX;
     switch (prop) {
-      case ALIGNMENT_PROPS.rr: newPosition.x = (rect.right-width); break;
+      case ALIGNMENT_PROPS.rr: newPosition.x = (rect.right - width); break;
       case ALIGNMENT_PROPS.ll: newPosition.x = rect.left; break;
-      case ALIGNMENT_PROPS.rl: newPosition.x = (rect.left-width); break;
+      case ALIGNMENT_PROPS.rl: newPosition.x = (rect.left - width); break;
       case ALIGNMENT_PROPS.lr: newPosition.x = rect.right; break;
-      case ALIGNMENT_PROPS.xx: newPosition.x = ((rect.left+rect.right-width)/2); break;
+      case ALIGNMENT_PROPS.xx: newPosition.x = ((rect.left + rect.right - width) / 2); break;
     }
   }
   if (attractedY) {
     const { prop, target: { rect } } = attractedY;
     switch (prop) {
       case ALIGNMENT_PROPS.tt: newPosition.y = rect.top; break;
-      case ALIGNMENT_PROPS.bb: newPosition.y = (rect.bottom-height); break;
+      case ALIGNMENT_PROPS.bb: newPosition.y = (rect.bottom - height); break;
       case ALIGNMENT_PROPS.tb: newPosition.y = rect.bottom; break;
-      case ALIGNMENT_PROPS.bt: newPosition.y = (rect.top-height); break;
-      case ALIGNMENT_PROPS.yy: newPosition.y = ((rect.top+rect.bottom-height)/2); break;
+      case ALIGNMENT_PROPS.bt: newPosition.y = (rect.top - height); break;
+      case ALIGNMENT_PROPS.yy: newPosition.y = ((rect.top + rect.bottom - height) / 2); break;
     }
   }
-  
+
   // trigger events
   const diffAttractedX = cmpAttractedResult(_lastAttractedX, attractedX);
   const diffAttractedY = cmpAttractedResult(_lastAttractedY, attractedY);
   if (diffAttractedX) {
-    (attractedX&&pushDomToEvent(eventsAttracted, attractedX.target.element));
-    (_lastAttractedX&&pushDomToEvent(eventsUnattracted, _lastAttractedX.target.element));
+    (attractedX && pushDomToEvent(eventsAttracted, attractedX.target.element));
+    (_lastAttractedX && pushDomToEvent(eventsUnattracted, _lastAttractedX.target.element));
   }
   if (diffAttractedY) {
-    (attractedY&&pushDomToEvent(eventsAttracted, attractedY.target.element));
-    (_lastAttractedY&&pushDomToEvent(eventsUnattracted, _lastAttractedY.target.element));
+    (attractedY && pushDomToEvent(eventsAttracted, attractedY.target.element));
+    (_lastAttractedY && pushDomToEvent(eventsUnattracted, _lastAttractedY.target.element));
   }
   eventsAttracted.forEach((element) => EventHandler.trigger(element, EVENT.attracted, dom));
   eventsUnattracted.forEach((element) => EventHandler.trigger(element, EVENT.unattracted, dom));
-  
-  const currentAttract = (attractedX||attractedY ?true :false);
-  const lastAttract = (_lastAttractedX||_lastAttractedY ?true :false);
+
+  const currentAttract = (attractedX || attractedY ? true : false);
+  const lastAttract = (_lastAttractedX || _lastAttractedY ? true : false);
   const eventHandler = this[MAGNET_PROPS.eventHandler];
   const currData = {
     x: stdMagentEventTarget(attractedX),
@@ -407,7 +407,7 @@ Magnet.prototype.handle = function(dom, refRect = stdRect(dom), toAttract = this
   };
 
   if (currentAttract) {
-    const anyDiff = (diffAttractedX||diffAttractedY);
+    const anyDiff = (diffAttractedX || diffAttractedY);
     if (!lastAttract) {
       // magnet start: start of any attract event
       eventHandler.trigger(EVENT.magnetChange, { source: dom, ...currData });
@@ -437,12 +437,12 @@ Magnet.prototype.handle = function(dom, refRect = stdRect(dom), toAttract = this
   const { beforeAttract, afterAttract, doAttract } = manualHandler;
   let targetRect = ((x, y) => stdRect({
     top: y,
-    right: (x+width),
-    bottom: (y+height),
+    right: (x + width),
+    bottom: (y + height),
     left: x,
     width,
     height,
-  }))((newPosition.x-parentRect.left), (newPosition.y-parentRect.top));
+  }))((newPosition.x - parentRect.left), (newPosition.y - parentRect.top));
 
   // before attract
   if (isfunc(beforeAttract)) {
@@ -500,7 +500,7 @@ Magnet.prototype.handle = function(dom, refRect = stdRect(dom), toAttract = this
       last: lastData,
     });
   }
-  
+
   this[MAGNET_PROPS.temp][domIndex] = {
     _lastAttractedX: attractedX,
     _lastAttractedY: attractedY,
@@ -511,7 +511,7 @@ Magnet.prototype.handle = function(dom, refRect = stdRect(dom), toAttract = this
 
 
 // set member rectangle
-Magnet.prototype.setMemberRectangle = function(dom, rect = stdRect(dom), useRelativeUnit = this.getUseRelativeUnit()) {
+Magnet.prototype.setMemberRectangle = function (dom, rect = stdRect(dom), useRelativeUnit = this.getUseRelativeUnit()) {
   if (!iselem(dom)) {
     throw new Error(`Invalid DOM: ${tostr(dom)}`);
   }
@@ -522,25 +522,27 @@ Magnet.prototype.setMemberRectangle = function(dom, rect = stdRect(dom), useRela
     useRelativeUnit = rect;
     rect = stdRect(dom);
   }
-  //rect = stdRect(rect);
   rect = stdRect({
     right: rect.right,
     bottom: rect.bottom,
     width: rect.width,
     height: rect.height,
   });
-  const { top, left, width, height } = rect;
+  // do not set size of el. this breaks with changing the zoom value
+  const { top, left } = rect;
   if (useRelativeUnit) {
     const { width: parentWidth, height: parentHeight } = stdRect(getParent(dom));
-    dom.style.top = toPreg(top/parentHeight);
-    dom.style.left = toPreg(left/parentWidth);
-    dom.style.width = toPreg(width/parentWidth);
-    dom.style.height = toPreg(height/parentHeight);
+    dom.style.top = toPreg(top / parentHeight);
+    dom.style.left = toPreg(left / parentWidth);
+    // do not set size of el. this breaks with changing the zoom value
+    // dom.style.width = toPreg(width/parentWidth);
+    // dom.style.height = toPreg(height/parentHeight);
   } else {
     dom.style.top = toPx(top);
     dom.style.left = toPx(left);
-    dom.style.width = toPx(width);
-    dom.style.height = toPx(height);
+    // do not set size of el. this breaks with changing the zoom value
+    // dom.style.width = toPx(width);
+    // dom.style.height = toPx(height);
   }
   dom.style.position = 'absolute';
   dom.style.right = 'auto';
@@ -553,10 +555,10 @@ Magnet.prototype.setMemberRectangle = function(dom, rect = stdRect(dom), useRela
 ['before', 'after', 'do'].forEach((prop) => {
   const funcName = `${prop}Attract`;
   Object.defineProperty(Magnet.prototype, funcName, {
-    get: function() {
+    get: function () {
       return this[MAGNET_PROPS.manualHandler][funcName];
     },
-    set: function(func) {
+    set: function (func) {
       this[MAGNET_PROPS.manualHandler][funcName] = func;
     },
   });
@@ -564,9 +566,9 @@ Magnet.prototype.setMemberRectangle = function(dom, rect = stdRect(dom), useRela
 
 
 // add
-Magnet.prototype.add = function(...doms) {
+Magnet.prototype.add = function (...doms) {
   doms = stdDoms(...doms);
-  
+
   // reject special elements
   [window, document, document.body].forEach((elm) => {
     if (doms.includes(elm)) {
@@ -591,18 +593,18 @@ Magnet.prototype.add = function(...doms) {
       const { x: oriX, y: oriY } = getEventXY(evt);
       const handleDom = (evt) => {
         const toAttract = (this.getAttractable()
-          ?(this.getAllowCtrlKey() ?_toAttract :true)
-          :false
+          ? (this.getAllowCtrlKey() ? _toAttract : true)
+          : false
         );
         const { x, y } = getEventXY(evt);
-        const diffX = (x-oriX);
-        const diffY = (y-oriY);
-        const newX = (oriLeft+diffX);
-        const newY = (oriTop+diffY);
+        const diffX = (x - oriX);
+        const diffY = (y - oriY);
+        const newX = (oriLeft + diffX);
+        const newY = (oriTop + diffY);
         const newRect = stdRect({
           top: newY,
-          right: (newX+width),
-          bottom: (newY+height),
+          right: (newX + width),
+          bottom: (newY + height),
           left: newX,
         });
         this.handle(dom, newRect, toAttract);
@@ -622,8 +624,8 @@ Magnet.prototype.add = function(...doms) {
         const domIndex = indexOfMember(this, dom);
         const { _lastAttractedX, _lastAttractedY } = this[MAGNET_PROPS.temp][domIndex];
         EventHandler.off(document.body, bindEventNames(this, EVENT.mouseMove, EVENT.mouseUp, EVENT.keyDown, EVENT.keyUp));
-        (_lastAttractedX&&pushDomToEvent(eventsUnattracted, _lastAttractedX.target.element));
-        (_lastAttractedY&&pushDomToEvent(eventsUnattracted, _lastAttractedY.target.element));
+        (_lastAttractedX && pushDomToEvent(eventsUnattracted, _lastAttractedX.target.element));
+        (_lastAttractedY && pushDomToEvent(eventsUnattracted, _lastAttractedY.target.element));
         eventsUnattracted.forEach((element) => EventHandler.trigger(element, EVENT.unattracted, dom));
         EventHandler.trigger(dom, EVENT.attractEnd, stdRect(dom));
         if (_lastAttractedX || _lastAttractedY) {
@@ -649,8 +651,8 @@ Magnet.prototype.add = function(...doms) {
 
 // member in group
 const indexOfMember = (self, dom) => self[MAGNET_PROPS.targets].indexOf(dom);
-Magnet.prototype.hasMember = function(dom) {
-  return (-1!==indexOfMember(this, dom));
+Magnet.prototype.hasMember = function (dom) {
+  return (-1 !== indexOfMember(this, dom));
 };
 
 
@@ -667,11 +669,11 @@ const removeMembers = (self, ...doms) => stdDoms(...doms).reduce((arr, dom) => {
   }
   return arr;
 }, []);
-Magnet.prototype.remove = function(...doms) {
+Magnet.prototype.remove = function (...doms) {
   removeMembers(this, ...doms);
   return this;
 };
-Magnet.prototype.removeFull = function(...doms) {
+Magnet.prototype.removeFull = function (...doms) {
   removeMembers(this, ...doms).forEach((dom) => {
     dom.style.position = '';
     dom.style.top = '';
@@ -695,11 +697,11 @@ const clearMembers = (self) => {
     return dom;
   });
 };
-Magnet.prototype.clear = function() {
+Magnet.prototype.clear = function () {
   clearMembers(this);
   return this;
 };
-Magnet.prototype.clearFull = function() {
+Magnet.prototype.clearFull = function () {
   clearMembers(this).forEach((dom) => {
     dom.style.position = '';
     dom.style.top = '';
@@ -716,7 +718,7 @@ Magnet.prototype.clearFull = function() {
 
 Magnet.isRect = (rect) => isRect(rect);
 Magnet.stdRect = (rect) => stdRect(rect);
-Magnet.measure = 
-Magnet.diffRect = (source, target, ...args) => diffRect(source, target, ...args);
+Magnet.measure =
+  Magnet.diffRect = (source, target, ...args) => diffRect(source, target, ...args);
 
 export default Magnet;
