@@ -599,8 +599,8 @@ Magnet.prototype.add = function (...doms) {
         const { x, y } = getEventXY(evt);
         const diffX = (x - oriX);
         const diffY = (y - oriY);
-        const newX = (oriLeft + diffX);
-        const newY = (oriTop + diffY);
+        const newX = Math.ceil(oriLeft + diffX);
+        const newY = Math.ceil(oriTop + diffY);
         const newRect = stdRect({
           top: newY,
           right: (newX + width),
